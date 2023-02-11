@@ -143,6 +143,13 @@
 	.endm
 
 FUNC _start , :
+	/******************************************************************************
+	 * RPi4:
+	 * Allow an early return (see below).
+	 */
+	stp	x29, x30, [sp, -16]!
+	mov	x29, sp
+
 	/*
 	 * If CFG_CORE_FFA is enabled, then x0 if non-NULL holds the TOS FW
 	 * config [1] address, else x0 if non-NULL holds the pagable part
@@ -242,8 +249,12 @@ clear_nex_bss:
 	b.lt	clear_nex_bss
 #endif
 
+	/******************************************************************************
+	 * RPi4:
+	 * set_sp does not work and prevents console output and an early return (see below).
+	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
-	set_sp
+//	set_sp
 
 	bl	thread_init_thread_core_local
 
@@ -280,8 +291,12 @@ clear_nex_bss:
 	mov	x0, #0
 #endif
 
-	adr	x1, boot_mmu_config
-	bl	core_init_mmu_map
+	/******************************************************************************
+	 * RPi4:
+	 * core_init_mmu_map prevents an early return (see below).
+	 */
+//	adr	x1, boot_mmu_config
+//	bl	core_init_mmu_map
 
 #ifdef CFG_CORE_ASLR
 	/*
@@ -320,9 +335,25 @@ clear_nex_bss:
 	bl	core_mmu_set_default_prtn_tbl
 #endif
 
+	/******************************************************************************
+	 * RPi4:
+	 * It runs to here at the moment. In boot_init_primary_early it would get stuck.
+	 * So here is a temporary early return.
+	 * TODO remove the following three lines
+	 */
+	bl	putStrReturn
+	ldp	x29, x30, [sp], 16
+	ret
+
 	mov	x0, x19		/* pagable part address */
 	mov	x1, #-1
 	bl	boot_init_primary_early
+
+	/******************************************************************************
+	 * RPi4:
+	 * Indicate that it returned from boot_init_primary_early.
+	 */
+	bl	putStrCheckpoint1
 
 #ifdef CFG_MEMTAG
 	init_memtag_per_cpu
