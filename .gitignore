@@ -5,3 +5,7 @@ TAGS
 out
 .project
 *.swp
+*.o
+*.elf
+*.tmp
+*.bin

@@ -1,0 +1,6 @@
+#!/bin/sh -v
+
+make \
+  CFG_ARM64_core=y \
+  CROSS_COMPILE64=/opt/toolchain/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- \
+  PLATFORM=rpi4
