@@ -147,8 +147,8 @@ FUNC _start , :
 	 * RPi4:
 	 * Allow an early return (see below).
 	 */
-	stp	x29, x30, [sp, -16]!
-	mov	x29, sp
+//	stp	x29, x30, [sp, -16]!
+//	mov	x29, sp
 
 	/*
 	 * If CFG_CORE_FFA is enabled, then x0 if non-NULL holds the TOS FW
@@ -251,7 +251,7 @@ clear_nex_bss:
 
 	/******************************************************************************
 	 * RPi4:
-	 * set_sp does not work and prevents console output and an early return (see below).
+	 * set_sp prevents console output.
 	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
 //	set_sp
@@ -293,7 +293,7 @@ clear_nex_bss:
 
 	/******************************************************************************
 	 * RPi4:
-	 * core_init_mmu_map prevents an early return (see below).
+	 * core_init_mmu_map prevents console output.
 	 */
 //	adr	x1, boot_mmu_config
 //	bl	core_init_mmu_map
@@ -339,11 +339,12 @@ clear_nex_bss:
 	 * RPi4:
 	 * It runs to here at the moment. In boot_init_primary_early it would get stuck.
 	 * So here is a temporary early return.
-	 * TODO remove the following three lines
 	 */
-	bl	putStrReturn
-	ldp	x29, x30, [sp], 16
-	ret
+//	bl	putStrReturn
+//	ldp	x29, x30, [sp], 16
+//	ret
+	/* Indicate that it ran to here. */
+	bl	putStrCheckpoint1
 
 	mov	x0, x19		/* pagable part address */
 	mov	x1, #-1
@@ -353,7 +354,7 @@ clear_nex_bss:
 	 * RPi4:
 	 * Indicate that it returned from boot_init_primary_early.
 	 */
-	bl	putStrCheckpoint1
+	bl	putStrCheckpoint2
 
 #ifdef CFG_MEMTAG
 	init_memtag_per_cpu

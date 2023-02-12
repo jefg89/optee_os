@@ -77,6 +77,10 @@ void putStrCheckpoint1(void);
 void putStrCheckpoint1(void) {
   putStr("optee-os: checkpoint 1\n");
 }
+void putStrCheckpoint2(void);
+void putStrCheckpoint2(void) {
+  putStr("optee-os: checkpoint 2\n");
+}
 
 enum
 {

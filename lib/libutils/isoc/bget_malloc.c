@@ -90,6 +90,36 @@
 #include <trace.h>
 #include <util.h>
 
+
+// RPi4: debug helper
+enum
+{
+  AUX_BASE        = 0xFE215000,
+  AUX_MU_IO_REG   = AUX_BASE + 64,
+  AUX_MU_LSR_REG  = AUX_BASE + 84,
+};
+static uint32_t mmioRead(int64_t reg) {
+  return *(volatile uint32_t*)reg;
+}
+static void mmioWrite(int64_t reg, uint32_t val) {
+  *(volatile uint32_t*)reg = val;
+}
+static uint32_t uartIsWriteCharReady(void) {
+  return mmioRead(AUX_MU_LSR_REG) & 0x20;
+}
+static void uartWriteChar(char c) {
+  while (!uartIsWriteCharReady());
+  mmioWrite(AUX_MU_IO_REG, c);
+}
+static void putStr(const char *str) {
+  while (*str) {
+    if (*str == '\n')
+      uartWriteChar('\r');
+    uartWriteChar(*str++);
+  }
+}
+
+
 #if defined(__KERNEL__)
 /* Compiling for TEE Core */
 #include <kernel/asan.h>
@@ -866,7 +896,9 @@ void free_wipe(void *ptr)
 
 static void gen_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 {
+putStr("gen_malloc_add_pool 1\n");
 	uint32_t exceptions = malloc_lock(ctx);
+putStr("gen_malloc_add_pool 2\n");
 
 	raw_malloc_add_pool(ctx, buf, len);
 	malloc_unlock(ctx, exceptions);

@@ -20,3 +20,15 @@ armstub: boot kernel
 [    0.000000] Machine model: Raspberry Pi 4 Model B Rev 1.4
 ...
 ```
+
+After removing the early return and inserting some debug checkpoints:
+```
+...
+armstub: boot optee-os
+optee-os: console_init done
+optee-os: checkpoint 1
+init_primary 1
+init_runtime 1
+gen_malloc_add_pool 1
+```
+After that, no further output appears and it hangs.
