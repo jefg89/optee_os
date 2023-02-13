@@ -251,7 +251,7 @@ clear_nex_bss:
 
 	/******************************************************************************
 	 * RPi4:
-	 * set_sp prevents console output.
+	 * set_sp hangs or prevents console output.
 	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
 //	set_sp
@@ -293,7 +293,7 @@ clear_nex_bss:
 
 	/******************************************************************************
 	 * RPi4:
-	 * core_init_mmu_map prevents console output.
+	 * core_init_mmu_map hangs or prevents console output.
 	 */
 //	adr	x1, boot_mmu_config
 //	bl	core_init_mmu_map

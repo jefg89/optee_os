@@ -176,7 +176,11 @@ struct malloc_ctx {
 
 static uint32_t malloc_lock(struct malloc_ctx *ctx)
 {
-	return cpu_spin_lock_xsave(&ctx->spinlock);
+  /******************************************************************
+   * RPi4: hangs
+   */
+//	return cpu_spin_lock_xsave(&ctx->spinlock);
+  return 0;
 }
 
 static void malloc_unlock(struct malloc_ctx *ctx, uint32_t exceptions)
@@ -901,7 +905,9 @@ putStr("gen_malloc_add_pool 1\n");
 putStr("gen_malloc_add_pool 2\n");
 
 	raw_malloc_add_pool(ctx, buf, len);
+putStr("gen_malloc_add_pool 3\n");
 	malloc_unlock(ctx, exceptions);
+putStr("gen_malloc_add_pool 4\n");
 }
 
 static bool gen_malloc_buffer_is_within_alloced(struct malloc_ctx *ctx,
@@ -946,6 +952,7 @@ void raw_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 	uintptr_t end = start + len;
 	void *p = NULL;
 	size_t l = 0;
+putStr("raw_malloc_add_pool 1\n");
 
 	start = ROUNDUP(start, SizeQuant);
 	end = ROUNDDOWN(end, SizeQuant);
@@ -954,15 +961,19 @@ void raw_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 		DMSG("Skipping too small pool");
 		return;
 	}
+putStr("raw_malloc_add_pool 2\n");
 
 	/* First pool requires a bigger size */
 	if (!ctx->pool_len && (end - start) < MALLOC_INITIAL_POOL_MIN_SIZE) {
 		DMSG("Skipping too small initial pool");
 		return;
 	}
+putStr("raw_malloc_add_pool 3\n");
 
 	tag_asan_free((void *)start, end - start);
+putStr("raw_malloc_add_pool 4\n");
 	bpool((void *)start, end - start, &ctx->poolset);
+putStr("raw_malloc_add_pool 5\n");
 	l = ctx->pool_len + 1;
 	p = realloc_unlocked(ctx, ctx->pool, sizeof(struct malloc_pool) * l);
 	assert(p);

@@ -30,5 +30,14 @@ optee-os: checkpoint 1
 init_primary 1
 init_runtime 1
 gen_malloc_add_pool 1
+gen_malloc_add_pool 2
+raw_malloc_add_pool 1
+raw_malloc_add_pool 2
+raw_malloc_add_pool 3
+raw_malloc_add_pool 4
+bpool 1
+bpool 2
+bpool 6
+bpool 7
 ```
 After that, no further output appears and it hangs.
