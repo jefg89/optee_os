@@ -249,12 +249,8 @@ clear_nex_bss:
 	b.lt	clear_nex_bss
 #endif
 
-	/******************************************************************************
-	 * RPi4:
-	 * set_sp hangs or prevents console output.
-	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
-//	set_sp
+	set_sp
 
 	bl	thread_init_thread_core_local
 
@@ -291,12 +287,8 @@ clear_nex_bss:
 	mov	x0, #0
 #endif
 
-	/******************************************************************************
-	 * RPi4:
-	 * core_init_mmu_map hangs or prevents console output.
-	 */
-//	adr	x1, boot_mmu_config
-//	bl	core_init_mmu_map
+	adr	x1, boot_mmu_config
+	bl	core_init_mmu_map
 
 #ifdef CFG_CORE_ASLR
 	/*
@@ -317,7 +309,14 @@ clear_nex_bss:
 #endif
 
 	bl	__get_core_pos
-	bl	enable_mmu
+
+	/******************************************************************************
+	 * RPi4:
+	 * enable_mmu hangs
+	 */
+//	bl	enable_mmu
+	bl	checkpoint
+
 #ifdef CFG_CORE_ASLR
 	/*
 	 * Reinitialize console, since register_serial_console() has
@@ -344,7 +343,7 @@ clear_nex_bss:
 //	ldp	x29, x30, [sp], 16
 //	ret
 	/* Indicate that it ran to here. */
-	bl	putStrCheckpoint1
+	bl	checkpoint1
 
 	mov	x0, x19		/* pagable part address */
 	mov	x1, #-1
@@ -354,7 +353,7 @@ clear_nex_bss:
 	 * RPi4:
 	 * Indicate that it returned from boot_init_primary_early.
 	 */
-	bl	putStrCheckpoint2
+	bl	checkpoint2
 
 #ifdef CFG_MEMTAG
 	init_memtag_per_cpu

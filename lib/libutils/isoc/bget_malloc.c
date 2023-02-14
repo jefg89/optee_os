@@ -90,36 +90,6 @@
 #include <trace.h>
 #include <util.h>
 
-
-// RPi4: debug helper
-enum
-{
-  AUX_BASE        = 0xFE215000,
-  AUX_MU_IO_REG   = AUX_BASE + 64,
-  AUX_MU_LSR_REG  = AUX_BASE + 84,
-};
-static uint32_t mmioRead(int64_t reg) {
-  return *(volatile uint32_t*)reg;
-}
-static void mmioWrite(int64_t reg, uint32_t val) {
-  *(volatile uint32_t*)reg = val;
-}
-static uint32_t uartIsWriteCharReady(void) {
-  return mmioRead(AUX_MU_LSR_REG) & 0x20;
-}
-static void uartWriteChar(char c) {
-  while (!uartIsWriteCharReady());
-  mmioWrite(AUX_MU_IO_REG, c);
-}
-static void putStr(const char *str) {
-  while (*str) {
-    if (*str == '\n')
-      uartWriteChar('\r');
-    uartWriteChar(*str++);
-  }
-}
-
-
 #if defined(__KERNEL__)
 /* Compiling for TEE Core */
 #include <kernel/asan.h>
@@ -185,7 +155,10 @@ static uint32_t malloc_lock(struct malloc_ctx *ctx)
 
 static void malloc_unlock(struct malloc_ctx *ctx, uint32_t exceptions)
 {
-	cpu_spin_unlock_xrestore(&ctx->spinlock, exceptions);
+  /******************************************************************
+   * RPi4: see above
+   */
+//	cpu_spin_unlock_xrestore(&ctx->spinlock, exceptions);
 }
 
 #else  /* __KERNEL__ */
@@ -900,14 +873,14 @@ void free_wipe(void *ptr)
 
 static void gen_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 {
-putStr("gen_malloc_add_pool 1\n");
+FMSG(".");
 	uint32_t exceptions = malloc_lock(ctx);
-putStr("gen_malloc_add_pool 2\n");
+FMSG(".");
 
 	raw_malloc_add_pool(ctx, buf, len);
-putStr("gen_malloc_add_pool 3\n");
+FMSG(".");
 	malloc_unlock(ctx, exceptions);
-putStr("gen_malloc_add_pool 4\n");
+FMSG(".");
 }
 
 static bool gen_malloc_buffer_is_within_alloced(struct malloc_ctx *ctx,
@@ -952,7 +925,6 @@ void raw_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 	uintptr_t end = start + len;
 	void *p = NULL;
 	size_t l = 0;
-putStr("raw_malloc_add_pool 1\n");
 
 	start = ROUNDUP(start, SizeQuant);
 	end = ROUNDDOWN(end, SizeQuant);
@@ -961,19 +933,15 @@ putStr("raw_malloc_add_pool 1\n");
 		DMSG("Skipping too small pool");
 		return;
 	}
-putStr("raw_malloc_add_pool 2\n");
 
 	/* First pool requires a bigger size */
 	if (!ctx->pool_len && (end - start) < MALLOC_INITIAL_POOL_MIN_SIZE) {
 		DMSG("Skipping too small initial pool");
 		return;
 	}
-putStr("raw_malloc_add_pool 3\n");
 
 	tag_asan_free((void *)start, end - start);
-putStr("raw_malloc_add_pool 4\n");
 	bpool((void *)start, end - start, &ctx->poolset);
-putStr("raw_malloc_add_pool 5\n");
 	l = ctx->pool_len + 1;
 	p = realloc_unlocked(ctx, ctx->pool, sizeof(struct malloc_pool) * l);
 	assert(p);

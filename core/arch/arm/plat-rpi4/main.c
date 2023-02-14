@@ -39,89 +39,25 @@ register_phys_mem_pgdir(MEM_AREA_IO_NSEC,
 
 static struct serial8250_uart_data console_data;
 
-void putStr(const char *str);
-static void setPutCh(void);
-
 void console_init(void)
 {
 	serial8250_uart_init(&console_data, CONSOLE_UART_BASE,
 			     CONSOLE_UART_CLK_IN_HZ, CONSOLE_BAUDRATE);
 	register_serial_console(&console_data.chip);
 
-	putStr("optee-os: did serial8250_uart_init work?\n");
-	setPutCh();
-	putStr("optee-os: console_init done\n");
+	DMSG("done");
 }
 
 
-static void putCh(char c)
-{
-  console_data.chip.ops->putc(&console_data.chip, c);
+void checkpoint(void);
+void checkpoint(void) {
+	FMSG(".");
 }
-
-void putStr(const char *str)
-{
-  while (*str)
-  {
-    if (*str == '\n')
-      putCh('\r');
-    putCh(*str++);
-  }
+void checkpoint1(void);
+void checkpoint1(void) {
+	FMSG("checkpoint 1");
 }
-
-void putStrReturn(void);
-void putStrReturn(void) {
-  putStr("optee-os: return\n");
-}
-void putStrCheckpoint1(void);
-void putStrCheckpoint1(void) {
-  putStr("optee-os: checkpoint 1\n");
-}
-void putStrCheckpoint2(void);
-void putStrCheckpoint2(void) {
-  putStr("optee-os: checkpoint 2\n");
-}
-
-enum
-{
-  PERIPHERAL_BASE = 0xFE000000,
-  AUX_BASE        = PERIPHERAL_BASE + 0x215000,
-  AUX_MU_IO_REG   = AUX_BASE + 64,
-  AUX_MU_LSR_REG  = AUX_BASE + 84,
-};
-
-static uint32_t mmioRead(int64_t reg)
-{
-  return *(volatile uint32_t*)reg;
-}
-
-static void mmioWrite(int64_t reg, uint32_t val)
-{
-  *(volatile uint32_t*)reg = val;
-}
-
-static uint32_t uartIsWriteCharReady(void)
-{
-  return mmioRead(AUX_MU_LSR_REG) & 0x20;
-}
-
-static void uartWriteChar(char c)
-{
-  while (!uartIsWriteCharReady());
-  mmioWrite(AUX_MU_IO_REG, c);
-}
-
-static void _putc(struct serial_chip *dummy __maybe_unused, int c)
-{
-  uartWriteChar(c);
-}
-
-static void setPutCh(void)
-{
-  static struct serial_ops ops;
-  ops.putc         = _putc;
-  ops.flush        = console_data.chip.ops->flush;
-  ops.have_rx_data = console_data.chip.ops->have_rx_data;
-  ops.getchar      = console_data.chip.ops->getchar;
-  console_data.chip.ops = &ops;
+void checkpoint2(void);
+void checkpoint2(void) {
+	FMSG("checkpoint 2");
 }

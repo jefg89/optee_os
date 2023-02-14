@@ -1104,11 +1104,9 @@ void bpool(buf, len, poolset)
 {
     struct bfhead *b = BFH(buf);
     struct bhead *bn;
-putStr("bpool 1\n");
 
 #ifdef SizeQuant
     len &= ~(SizeQuant - 1);
-putStr("bpool 2\n");
 #endif
 #ifdef BECtl
     if (poolset->pool_len == 0) {
@@ -1116,13 +1114,10 @@ putStr("bpool 2\n");
     } else if (len != poolset->pool_len) {
 	poolset->pool_len = -1;
     }
-putStr("bpool 3\n");
 #ifdef BufStats
     poolset->numpget++;		       /* Number of block acquisitions */
     poolset->numpblk++;		       /* Number of blocks total */
-putStr("bpool 4\n");
     assert(poolset->numpblk == poolset->numpget - poolset->numprel);
-putStr("bpool 5\n");
 #endif /* BufStats */
 #endif /* BECtl */
 
@@ -1131,7 +1126,6 @@ putStr("bpool 5\n");
        whose size we can store in bhead.bsize. */
 
     assert(len - sizeof(struct bhead) <= -((bufsize) ESent + 1));
-putStr("bpool 6\n");
 
     /* Clear  the  backpointer at  the start of the block to indicate that
        there  is  no  free  block  prior  to  this   one.    That   blocks
@@ -1141,11 +1135,8 @@ putStr("bpool 6\n");
 
     /* Chain the new block to the free list. */
 
-putStr("bpool 7\n");
     assert(poolset->freelist.ql.blink->ql.flink == &poolset->freelist);
-putStr("bpool 8\n");
     assert(poolset->freelist.ql.flink->ql.blink == &poolset->freelist);
-putStr("bpool 9\n");
     b->ql.flink = &poolset->freelist;
     b->ql.blink = poolset->freelist.ql.blink;
     poolset->freelist.ql.blink = b;

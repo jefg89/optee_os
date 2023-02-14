@@ -610,9 +610,9 @@ static void init_runtime(unsigned long pageable_part __unused)
 	nex_malloc_add_pool(__nex_heap_start, __nex_heap_end -
 					      __nex_heap_start);
 #else
-putStr("init_runtime 1\n");
+FMSG(".");
 	malloc_add_pool(__heap1_start, __heap1_end - __heap1_start);
-putStr("init_runtime 2\n");
+FMSG(".");
 #endif
 
 	IMSG_RAW("\n");
@@ -1353,9 +1353,9 @@ static void init_primary(unsigned long pageable_part, unsigned long nsec_entry)
 	 * things set by init_runtime()).
 	 */
 	thread_get_core_local()->curr_thread = 0;
-putStr("init_primary 1\n");
+FMSG(".");
 	init_runtime(pageable_part);
-putStr("init_primary 2\n");
+FMSG(".");
 
 	if (IS_ENABLED(CFG_NS_VIRTUALIZATION)) {
 		/*
@@ -1365,12 +1365,17 @@ putStr("init_primary 2\n");
 		 * "curr_thread" and call it done.
 		 */
 		thread_get_core_local()->curr_thread = -1;
+FMSG(".");
 	} else {
 		thread_init_boot_thread();
+FMSG(".");
 	}
 	thread_init_primary();
+FMSG(".");
 	thread_init_per_cpu();
+FMSG(".");
 	init_sec_mon(nsec_entry);
+FMSG(".");
 }
 
 static bool cpu_nmfi_enabled(void)

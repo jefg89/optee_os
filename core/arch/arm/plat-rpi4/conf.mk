@@ -1,6 +1,9 @@
 include core/arch/arm/cpu/cortex-armv8-0.mk
 
-$(call force,CFG_TEE_CORE_NB_CORE,4)
+$(call force,CFG_TEE_LOAD_ADDR,0x1000)
+$(call force,CFG_CORE_ASLR,n)
+$(call force,CFG_CORE_RWDATA_NOEXEC,n)
+$(call force,CFG_TEE_CORE_NB_CORE,1)
 
 CFG_SHMEM_START ?= 0x08000000
 CFG_SHMEM_SIZE ?= 0x00400000
