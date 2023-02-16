@@ -28,9 +28,9 @@ armstub: boot kernel
 
 Next Steps:
 - Removing the early return
-- Inserting additional [debug output](https://github.com/peter-nebe/optee_os/blob/7dbee63aa9f97449dd159f7677ce15b33aa7835d/core/arch/arm/kernel/entry_a64.S#L318)
-- Changing [configuration values](https://github.com/peter-nebe/optee_os/blob/7dbee63aa9f97449dd159f7677ce15b33aa7835d/core/arch/arm/plat-rpi4/conf.mk#L3)
-- [Commenting out](https://github.com/peter-nebe/optee_os/blob/7dbee63aa9f97449dd159f7677ce15b33aa7835d/core/arch/arm/kernel/entry_a64.S#L317) function calls that are stuck
+- Inserting additional [debug output](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/kernel/entry_a64.S#L318)
+- Changing [configuration values](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/plat-rpi4/conf.mk#L4)
+- [Commenting out](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/kernel/entry_a64.S#L317) function calls that are stuck
 
 This reveals some of the OPTEE-OS initialization work:
 ```
@@ -93,6 +93,6 @@ E/TC:0 0  0x0001df98
 E/TC:0 0  0x00014f90
 E/TC:0 0  0x000084d8
 ```
-The flow ends with a failure of the [address mapping check](https://github.com/peter-nebe/optee_os/blob/7dbee63aa9f97449dd159f7677ce15b33aa7835d/core/mm/core_mmu.c#L2155). That is also clear because the MMU is not enabled.
+The flow ends with a failure of the [address mapping check](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/mm/core_mmu.c#L2155). That is also clear because the MMU is not enabled.
 
 It's certainly not the smartest thing to do, but I'm not familiar with OPTEE and it's a learning project. If anyone knows the solution to the problems, please let me know.
