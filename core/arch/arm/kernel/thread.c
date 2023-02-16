@@ -763,7 +763,9 @@ void thread_init_per_cpu(void)
 	thread_set_und_sp((vaddr_t)l);
 #endif
 
-	thread_init_vbar(get_excp_vect());
+FMSG(".");
+//	thread_init_vbar(get_excp_vect());
+FMSG(".");
 
 #ifdef CFG_FTRACE_SUPPORT
 	/*
