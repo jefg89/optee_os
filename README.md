@@ -1,6 +1,6 @@
 At the moment, as I write this document, there is no publicly available port of OPTEE-OS to the Raspberry Pi 4. The RPi3, on the other hand, is officially supported. So I want to try to adapt the RPi3 port to the RPi4. However, I know neither the Raspberry Pi nor the OPTEE-OS. So the motto is: Learning by doing.
 
-Where does the platform configuration need to be adjusted? So far I've only found two values: CONSOLE_UART_BASE and CONSOLE_UART_CLK_IN_HZ.
+Where does the platform configuration need to be adjusted? So far I've only found two values: [CONSOLE_UART_BASE](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/plat-rpi4/platform_config.h#L44) and [CONSOLE_UART_CLK_IN_HZ](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/plat-rpi4/platform_config.h#L46).
 
 Then I did the following steps:
 - Extension of the [armstub](core/arch/arm/plat-rpi4/armstub) bootloader so that it boots OPTEE-OS before the kernel
@@ -30,11 +30,11 @@ armstub: boot kernel
 ...
 ```
 
-The interesting thing is that the OPTEE-OS runs without the ARM Trusted Firmware (TF-A) up to this point. Only at the end of the initialization does OPTEE-OS make a Secure Monitor Call (SMC). The SMC is made in place of the usual return. So I did the following steps:
-- Moving the early return until just before the SMC
-- Inserting additional [debug output](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/kernel/entry_a64.S#L318)
-- Changing [configuration values](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/plat-rpi4/conf.mk#L4)
-- [Commenting out](https://github.com/peter-nebe/optee_os/blob/b703ae578cd6cfa2d3751331f1477ab734655e90/core/arch/arm/kernel/entry_a64.S#L317) function calls that are stuck
+The interesting thing is that the OPTEE-OS runs without the ARM Trusted Firmware (TF-A) up to this point. Only at the [end](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L443) of the initialization does OPTEE-OS make a Secure Monitor Call (SMC). The SMC is made in place of the usual return. So I did the following steps:
+- Moving the early return until just [before](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L426) the SMC
+- Inserting additional [debug output](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L341)
+- Changing [configuration values](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/plat-rpi4/conf.mk#L3)
+- [Commenting out](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L317) function calls that are stuck
 
 This reveals the initialization of the OPTEE-OS:
 ```
@@ -120,7 +120,7 @@ armstub: boot kernel
 
 The next steps will be:
 - Enabling the MMU
-- Enabling the synchronization primitive (cpu_spin_lock_xsave)
+- Enabling the synchronization primitive ([cpu_spin_lock_xsave](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/lib/libutils/isoc/bget_malloc.c#L149))
 - Start the TF-A with Secure Monitor
 - Initialization of the OPTEE kernel driver
 
