@@ -41,7 +41,7 @@
 #endif /* ARM64 */
 
 /* 16550 UART */
-#define CONSOLE_UART_BASE	0xFE215040 /* UART0 */
+#define CONSOLE_UART_BASE	0xfe215040 /* UART0 */
 #define CONSOLE_BAUDRATE	115200
 #define CONSOLE_UART_CLK_IN_HZ	48000000 // see https://www.raspberrypi.com/documentation/computers/config_txt.html#init_uart_clock
 

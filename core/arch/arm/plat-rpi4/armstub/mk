@@ -1,5 +1,11 @@
 #!/bin/sh -v
 
+ARMSTUB_DIR=$(pwd)
 OPTEEOS_DIR=../../../../..
+
+cd ${OPTEEOS_DIR}
+./_mk
+
+cd ${ARMSTUB_DIR}
 make
 cat armstub8.tmp ${OPTEEOS_DIR}/out/arm-plat-rpi4/core/tee-pager_v2.bin > armstub8-optee.bin

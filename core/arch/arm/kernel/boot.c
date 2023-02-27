@@ -670,7 +670,11 @@ void *get_external_dt(void)
 	if (!IS_ENABLED(CFG_EXTERNAL_DT))
 		return NULL;
 
-	assert(cpu_mmu_enabled());
+	/******************************************************************************
+	 * RPi4:
+	 * MMU not working yet, temporarily skip assert
+	 */
+//	assert(cpu_mmu_enabled());
 	return external_dt.blob;
 }
 
@@ -691,9 +695,13 @@ static TEE_Result release_external_dt(void)
 		panic();
 	}
 
-	if (core_mmu_remove_mapping(MEM_AREA_EXT_DT, external_dt.blob,
-				    CFG_DTB_MAX_SIZE))
-		panic("Failed to remove temporary Device Tree mapping");
+	/******************************************************************************
+	 * RPi4:
+	 * MMU not working yet, mapping was not added
+	 */
+//	if (core_mmu_remove_mapping(MEM_AREA_EXT_DT, external_dt.blob,
+//				    CFG_DTB_MAX_SIZE))
+//		panic("Failed to remove temporary Device Tree mapping");
 
 	/* External DTB no more reached, reset pointer to invalid */
 	external_dt.blob = NULL;
@@ -1173,7 +1181,12 @@ static void init_external_dt(unsigned long phys_dt)
 		return;
 	}
 
-	fdt = core_mmu_add_mapping(MEM_AREA_EXT_DT, phys_dt, CFG_DTB_MAX_SIZE);
+	/******************************************************************************
+	 * RPi4:
+	 * MMU not working yet, temporarily skip mapping
+	 */
+//	fdt = core_mmu_add_mapping(MEM_AREA_EXT_DT, phys_dt, CFG_DTB_MAX_SIZE);
+	fdt = phys_dt;
 	if (!fdt)
 		panic("Failed to map external DTB");
 
@@ -1365,17 +1378,12 @@ FMSG(".");
 		 * "curr_thread" and call it done.
 		 */
 		thread_get_core_local()->curr_thread = -1;
-FMSG(".");
 	} else {
 		thread_init_boot_thread();
-FMSG(".");
 	}
 	thread_init_primary();
-FMSG(".");
 	thread_init_per_cpu();
-FMSG(".");
 	init_sec_mon(nsec_entry);
-FMSG(".");
 }
 
 static bool cpu_nmfi_enabled(void)
@@ -1398,7 +1406,11 @@ void __weak boot_init_primary_late(unsigned long fdt)
 	tpm_map_log_area(get_external_dt());
 	discover_nsec_memory();
 	update_external_dt();
-	configure_console_from_dt();
+	/******************************************************************************
+	 * RPi4:
+	 * not working, temporarily skip it
+	 */
+//	configure_console_from_dt();
 
 	IMSG("OP-TEE version: %s", core_v_str);
 	if (IS_ENABLED(CFG_WARN_INSECURE)) {

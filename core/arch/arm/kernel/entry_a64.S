@@ -145,10 +145,10 @@
 FUNC _start , :
 	/******************************************************************************
 	 * RPi4:
-	 * Allow an early return (see below).
+	 * secure monitor is not running yet, therefore temporarily enable a conventional return (see below)
 	 */
-//	stp	x29, x30, [sp, -16]!
-//	mov	x29, sp
+	stp	x29, x30, [sp, -16]!
+	mov	x29, sp
 
 	/*
 	 * If CFG_CORE_FFA is enabled, then x0 if non-NULL holds the TOS FW
@@ -249,8 +249,12 @@ clear_nex_bss:
 	b.lt	clear_nex_bss
 #endif
 
+	/******************************************************************************
+	 * RPi4:
+	 * temporarily do not set a new stack to enable the conventional return (see below)
+	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
-	set_sp
+//	set_sp
 
 	bl	thread_init_thread_core_local
 
@@ -336,13 +340,8 @@ clear_nex_bss:
 
 	/******************************************************************************
 	 * RPi4:
-	 * It runs to here at the moment. In boot_init_primary_early it would get stuck.
-	 * So here is a temporary early return.
+	 * Indicate that it ran to here.
 	 */
-//	bl	putStrReturn
-//	ldp	x29, x30, [sp], 16
-//	ret
-	/* Indicate that it ran to here. */
 	bl	checkpoint1
 
 	mov	x0, x19		/* pagable part address */
@@ -370,6 +369,12 @@ clear_nex_bss:
 #endif
 	mov	x0, x20		/* DT address */
 	bl	boot_init_primary_late
+	/******************************************************************************
+	 * RPi4:
+	 * Indicate that it returned from boot_init_primary_late.
+	 */
+	bl	checkpoint
+
 #ifdef CFG_CORE_PAUTH
 	init_pauth_per_cpu
 #endif
@@ -418,6 +423,14 @@ clear_nex_bss:
 	bl	thread_spmc_register_secondary_ep
 	b	thread_ffa_msg_wait
 #else
+	/******************************************************************************
+	 * RPi4:
+	 * secure monitor is not running yet, therefore temporarily execute a conventional return
+	 */
+	bl	checkpoint3
+	ldp	x29, x30, [sp], 16
+	ret
+
 	/*
 	 * Pass the vector address returned from main_init
 	 * Compensate for the load offset since cpu_on_handler() is

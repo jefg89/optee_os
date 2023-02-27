@@ -61,3 +61,7 @@ void checkpoint2(void);
 void checkpoint2(void) {
 	FMSG("checkpoint 2");
 }
+void checkpoint3(void);
+void checkpoint3(void) {
+	FMSG("checkpoint 3");
+}

@@ -213,7 +213,7 @@ primary_cpu:
 	bl	uartWriteString
 	mov	x0, #0
 	mov	x1, #0
-	mov	x2, #0
+	ldr	w2, dtb_ptr32
 	bl	__OpteeOsEntry
 
 	ldr	x0, =strBootKernel

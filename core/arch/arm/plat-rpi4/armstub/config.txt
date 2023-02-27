@@ -3,3 +3,9 @@ uart_2ndstage=1
 
 arm_64bit=1
 armstub=armstub8-optee.bin
+
+kernel=Image
+initramfs rootfs.cpio.gz 0x2bd10f00   # = device_tree_end
+
+device_tree_address=0x2bd00f00
+device_tree_end=0x2bd10f00   # = device_tree_address + 64 KiB
