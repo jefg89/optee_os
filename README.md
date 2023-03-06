@@ -125,3 +125,5 @@ The next steps will be:
 - Initialization of the OPTEE kernel driver
 
 Unfortunately, I have no idea why the MMU and the synchronization primitives aren't working. If anyone knows the solution to the problems, please let me know.
+
+**Update:** Here you can see how the OPTEE-OS is called and initialized by the TF-A: https://github.com/peter-nebe/arm-trusted-firmware

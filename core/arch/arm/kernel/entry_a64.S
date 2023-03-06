@@ -143,13 +143,6 @@
 	.endm
 
 FUNC _start , :
-	/******************************************************************************
-	 * RPi4:
-	 * secure monitor is not running yet, therefore temporarily enable a conventional return (see below)
-	 */
-	stp	x29, x30, [sp, -16]!
-	mov	x29, sp
-
 	/*
 	 * If CFG_CORE_FFA is enabled, then x0 if non-NULL holds the TOS FW
 	 * config [1] address, else x0 if non-NULL holds the pagable part
@@ -249,12 +242,8 @@ clear_nex_bss:
 	b.lt	clear_nex_bss
 #endif
 
-	/******************************************************************************
-	 * RPi4:
-	 * temporarily do not set a new stack to enable the conventional return (see below)
-	 */
 	/* Setup SP_EL0 and SP_EL1, SP will be set to SP_EL0 */
-//	set_sp
+	set_sp
 
 	bl	thread_init_thread_core_local
 
@@ -425,11 +414,9 @@ clear_nex_bss:
 #else
 	/******************************************************************************
 	 * RPi4:
-	 * secure monitor is not running yet, therefore temporarily execute a conventional return
+	 * Indicate that it ran to here.
 	 */
 	bl	checkpoint3
-	ldp	x29, x30, [sp], 16
-	ret
 
 	/*
 	 * Pass the vector address returned from main_init
