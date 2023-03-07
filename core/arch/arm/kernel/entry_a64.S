@@ -302,14 +302,7 @@ clear_nex_bss:
 #endif
 
 	bl	__get_core_pos
-
-	/******************************************************************************
-	 * RPi4:
-	 * enable_mmu hangs
-	 */
-//	bl	enable_mmu
-	bl	checkpoint
-
+	bl	enable_mmu
 #ifdef CFG_CORE_ASLR
 	/*
 	 * Reinitialize console, since register_serial_console() has
@@ -327,21 +320,9 @@ clear_nex_bss:
 	bl	core_mmu_set_default_prtn_tbl
 #endif
 
-	/******************************************************************************
-	 * RPi4:
-	 * Indicate that it ran to here.
-	 */
-	bl	checkpoint1
-
 	mov	x0, x19		/* pagable part address */
 	mov	x1, #-1
 	bl	boot_init_primary_early
-
-	/******************************************************************************
-	 * RPi4:
-	 * Indicate that it returned from boot_init_primary_early.
-	 */
-	bl	checkpoint2
 
 #ifdef CFG_MEMTAG
 	init_memtag_per_cpu
@@ -358,12 +339,6 @@ clear_nex_bss:
 #endif
 	mov	x0, x20		/* DT address */
 	bl	boot_init_primary_late
-	/******************************************************************************
-	 * RPi4:
-	 * Indicate that it returned from boot_init_primary_late.
-	 */
-	bl	checkpoint
-
 #ifdef CFG_CORE_PAUTH
 	init_pauth_per_cpu
 #endif
@@ -412,12 +387,6 @@ clear_nex_bss:
 	bl	thread_spmc_register_secondary_ep
 	b	thread_ffa_msg_wait
 #else
-	/******************************************************************************
-	 * RPi4:
-	 * Indicate that it ran to here.
-	 */
-	bl	checkpoint3
-
 	/*
 	 * Pass the vector address returned from main_init
 	 * Compensate for the load offset since cpu_on_handler() is

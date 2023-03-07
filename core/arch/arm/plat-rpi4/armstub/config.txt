@@ -5,6 +5,9 @@ arm_64bit=1
 armstub=armstub8-optee.bin
 
 kernel=Image
+# load kernel directly to this address, 
+# not to 0x80000 with subsequent relocation
+kernel_address=0x200000
 initramfs rootfs.cpio.gz 0x2bd10f00   # = device_tree_end
 
 device_tree_address=0x2bd00f00

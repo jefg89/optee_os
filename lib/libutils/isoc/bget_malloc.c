@@ -146,19 +146,12 @@ struct malloc_ctx {
 
 static uint32_t malloc_lock(struct malloc_ctx *ctx)
 {
-  /******************************************************************
-   * RPi4: hangs
-   */
-//	return cpu_spin_lock_xsave(&ctx->spinlock);
-  return 0;
+	return cpu_spin_lock_xsave(&ctx->spinlock);
 }
 
 static void malloc_unlock(struct malloc_ctx *ctx, uint32_t exceptions)
 {
-  /******************************************************************
-   * RPi4: see above
-   */
-//	cpu_spin_unlock_xrestore(&ctx->spinlock, exceptions);
+	cpu_spin_unlock_xrestore(&ctx->spinlock, exceptions);
 }
 
 #else  /* __KERNEL__ */
@@ -873,14 +866,10 @@ void free_wipe(void *ptr)
 
 static void gen_malloc_add_pool(struct malloc_ctx *ctx, void *buf, size_t len)
 {
-FMSG(".");
 	uint32_t exceptions = malloc_lock(ctx);
-FMSG(".");
 
 	raw_malloc_add_pool(ctx, buf, len);
-FMSG(".");
 	malloc_unlock(ctx, exceptions);
-FMSG(".");
 }
 
 static bool gen_malloc_buffer_is_within_alloced(struct malloc_ctx *ctx,

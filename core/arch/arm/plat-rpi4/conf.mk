@@ -1,8 +1,5 @@
 include core/arch/arm/cpu/cortex-armv8-0.mk
 
-$(call force, CFG_CORE_DYN_SHM, n)
-$(call force, CFG_CORE_STACK_PROTECTOR_STRONG, n)
-$(call force, CFG_DT, y)
 $(call force,CFG_TEE_CORE_NB_CORE,4)
 
 CFG_SHMEM_START ?= 0x08000000
@@ -15,9 +12,7 @@ $(call force,CFG_8250_UART,y)
 $(call force,CFG_SECURE_TIME_SOURCE_CNTPCT,y)
 $(call force,CFG_WITH_ARM_TRUSTED_FW,y)
 
-# temporarily allow only one thread because cpu_spin_lock_xsave is not working yet
-#CFG_NUM_THREADS ?= 4
-CFG_NUM_THREADS ?= 1
+CFG_NUM_THREADS ?= 4
 CFG_CRYPTO_WITH_CE ?= n
 
 CFG_TEE_CORE_EMBED_INTERNAL_TESTS ?= y
@@ -26,7 +21,6 @@ CFG_WITH_STATS ?= y
 
 arm32-platform-cflags += -Wno-error=cast-align
 arm64-platform-cflags += -Wno-error=cast-align
-arm64-platform-cflags += -mcpu=cortex-a72
 
 $(call force,CFG_CRYPTO_SHA256_ARM32_CE,n)
 $(call force,CFG_CRYPTO_SHA256_ARM64_CE,n)

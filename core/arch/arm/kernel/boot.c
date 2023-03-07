@@ -46,8 +46,6 @@
 #include <kernel/vfp.h>
 #endif
 
-void putStr(const char *str);
-
 /*
  * In this file we're using unsigned long to represent physical pointers as
  * they are received in a single register when OP-TEE is initially entered.
@@ -610,9 +608,7 @@ static void init_runtime(unsigned long pageable_part __unused)
 	nex_malloc_add_pool(__nex_heap_start, __nex_heap_end -
 					      __nex_heap_start);
 #else
-FMSG(".");
 	malloc_add_pool(__heap1_start, __heap1_end - __heap1_start);
-FMSG(".");
 #endif
 
 	IMSG_RAW("\n");
@@ -670,11 +666,7 @@ void *get_external_dt(void)
 	if (!IS_ENABLED(CFG_EXTERNAL_DT))
 		return NULL;
 
-	/******************************************************************************
-	 * RPi4:
-	 * MMU not working yet, temporarily skip assert
-	 */
-//	assert(cpu_mmu_enabled());
+	assert(cpu_mmu_enabled());
 	return external_dt.blob;
 }
 
@@ -695,13 +687,9 @@ static TEE_Result release_external_dt(void)
 		panic();
 	}
 
-	/******************************************************************************
-	 * RPi4:
-	 * MMU not working yet, mapping was not added
-	 */
-//	if (core_mmu_remove_mapping(MEM_AREA_EXT_DT, external_dt.blob,
-//				    CFG_DTB_MAX_SIZE))
-//		panic("Failed to remove temporary Device Tree mapping");
+	if (core_mmu_remove_mapping(MEM_AREA_EXT_DT, external_dt.blob,
+				    CFG_DTB_MAX_SIZE))
+		panic("Failed to remove temporary Device Tree mapping");
 
 	/* External DTB no more reached, reset pointer to invalid */
 	external_dt.blob = NULL;
@@ -1181,12 +1169,7 @@ static void init_external_dt(unsigned long phys_dt)
 		return;
 	}
 
-	/******************************************************************************
-	 * RPi4:
-	 * MMU not working yet, temporarily skip mapping
-	 */
-//	fdt = core_mmu_add_mapping(MEM_AREA_EXT_DT, phys_dt, CFG_DTB_MAX_SIZE);
-	fdt = phys_dt;
+	fdt = core_mmu_add_mapping(MEM_AREA_EXT_DT, phys_dt, CFG_DTB_MAX_SIZE);
 	if (!fdt)
 		panic("Failed to map external DTB");
 
@@ -1366,9 +1349,7 @@ static void init_primary(unsigned long pageable_part, unsigned long nsec_entry)
 	 * things set by init_runtime()).
 	 */
 	thread_get_core_local()->curr_thread = 0;
-FMSG(".");
 	init_runtime(pageable_part);
-FMSG(".");
 
 	if (IS_ENABLED(CFG_NS_VIRTUALIZATION)) {
 		/*
@@ -1406,11 +1387,7 @@ void __weak boot_init_primary_late(unsigned long fdt)
 	tpm_map_log_area(get_external_dt());
 	discover_nsec_memory();
 	update_external_dt();
-	/******************************************************************************
-	 * RPi4:
-	 * not working, temporarily skip it
-	 */
-//	configure_console_from_dt();
+	configure_console_from_dt();
 
 	IMSG("OP-TEE version: %s", core_v_str);
 	if (IS_ENABLED(CFG_WARN_INSECURE)) {

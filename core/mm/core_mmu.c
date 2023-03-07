@@ -1009,14 +1009,7 @@ static bool assign_mem_va_dir(vaddr_t tee_ram_va,
 
 	/* Clear eventual previous assignments */
 	for (map = memory_map; !core_mmap_is_end_of_table(map); map++)
-		/******************************************************************************
-		 * RPi4:
-		 * MMU not working yet, temporarily set identity map
-		 */
-//		map->va = 0;
-		map->va = map->pa;
-return true;
-
+		map->va = 0;
 
 	/*
 	 * TEE RAM regions are always aligned with region_size.

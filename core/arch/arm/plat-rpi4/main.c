@@ -44,24 +44,4 @@ void console_init(void)
 	serial8250_uart_init(&console_data, CONSOLE_UART_BASE,
 			     CONSOLE_UART_CLK_IN_HZ, CONSOLE_BAUDRATE);
 	register_serial_console(&console_data.chip);
-
-	DMSG("done");
-}
-
-
-void checkpoint(void);
-void checkpoint(void) {
-	FMSG(".");
-}
-void checkpoint1(void);
-void checkpoint1(void) {
-	FMSG("checkpoint 1");
-}
-void checkpoint2(void);
-void checkpoint2(void) {
-	FMSG("checkpoint 2");
-}
-void checkpoint3(void);
-void checkpoint3(void) {
-	FMSG("checkpoint 3");
 }
