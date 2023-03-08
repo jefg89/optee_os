@@ -7,7 +7,7 @@ make \
   CROSS_COMPILE64=/opt/toolchain/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- \
   PLATFORM=rpi4 \
   CFG_ARM64_core=y \
-  CFG_DT=y \
-  CFG_TEE_CORE_LOG_LEVEL=4
+  CFG_USER_TA_TARGETS=ta_arm64 \
+  CFG_DT=y
 
 cd ${RPI4_DIR}
