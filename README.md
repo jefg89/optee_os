@@ -120,12 +120,17 @@ D/TA:  TA_DestroyEntryPoint:50 has been called
 # 
 ```
 
-The log outputs look good. OP-TEE runs on the Raspberry Pi 4!
+The log outputs look good. **OP-TEE runs on the Raspberry Pi 4!**
 
-Starting with the RPi3, only the two CONSOLE_UART... values (see above) were adjusted in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. Furthermore, of course, the Linux kernel must be built with the OP-TEE driver (e.g. with buildroot).
+Starting with the RPi3, only the two CONSOLE_UART... values (see above) were adjusted in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. Furthermore, of course, the Linux kernel must be built with the default OP-TEE driver (e.g. with buildroot).
 
-TF-A and OPTEE-OS can be built together as follows:
+This fork of OPTEE-OS also requires my fork of TF-A. They can be **built** together as follows:
 ```
 cd <development root>/arm-trusted-firmware/plat/rpi/rpi4
 ./mk-rpi4
 ```
+
+I already have a project that uses the RPi4 port: https://github.com/peter-nebe/optee-security-test
+
+#### Disclaimer
+The same applies to the RPi4 as to the [RPi3](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#disclaimer): This port of TF-A and OPTEE-OS is **NOT SECURE!** It is provided solely for **educational purposes** and **prototyping**.
