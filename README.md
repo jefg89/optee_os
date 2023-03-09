@@ -1,10 +1,10 @@
-As of this writing, there is no publicly available port of OPTEE-OS to the Raspberry Pi 4. The RPi3, on the other hand, is officially supported. So I want to try to adapt the RPi3 port to the RPi4. However, I know neither the Raspberry Pi nor the OPTEE-OS. So the motto is: Learning by doing.
+As of this writing, there is no publicly available port of OP-TEE OS to the Raspberry Pi 4. The RPi3, on the other hand, is officially supported. So I want to try to adapt the RPi3 port to the RPi4. However, I know neither the Raspberry Pi nor the OP-TEE OS. So the motto is: Learning by doing.
 
 Where does the platform configuration need to be adjusted? So far I've only found two values: [CONSOLE_UART_BASE](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/plat-rpi4/platform_config.h#L44) and [CONSOLE_UART_CLK_IN_HZ](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/plat-rpi4/platform_config.h#L46).
 
 Then I did the following steps:
-- Extension of the [armstub](core/arch/arm/plat-rpi4/armstub) bootloader so that it boots OPTEE-OS before the kernel
-- Implementation of an [early return](https://github.com/peter-nebe/optee_os/blob/d2012188dfb5ed9558ecaf60e44db7a99433caa4/core/arch/arm/kernel/entry_a64.S#L338) in the boot sequence of OPTEE-OS
+- Extension of the [armstub](core/arch/arm/plat-rpi4/armstub) bootloader so that it boots OP-TEE OS before the kernel
+- Implementation of an [early return](https://github.com/peter-nebe/optee_os/blob/d2012188dfb5ed9558ecaf60e44db7a99433caa4/core/arch/arm/kernel/entry_a64.S#L338) in the boot sequence of OP-TEE OS
 
 This results in the following boot flow:
 ```
@@ -30,11 +30,11 @@ armstub: boot kernel
 ...
 ```
 
-The interesting thing is that the OPTEE-OS runs without the ARM Trusted Firmware (TF-A) up to this point. Only at the [end](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L443) of the initialization does OPTEE-OS make a Secure Monitor Call (SMC). 
+The interesting thing is that the OP-TEE OS runs without the ARM Trusted Firmware (TF-A) up to this point. Only at the [end](https://github.com/peter-nebe/optee_os/blob/40f3400e4ff38ad61ff7018efdcf8f9372459761/core/arch/arm/kernel/entry_a64.S#L443) of the initialization does OP-TEE OS make a Secure Monitor Call (SMC). 
 
 However, the people at Linaro were kind enough to point out that I also need to sort out the TF-A side of things. I've tried that. The current status of this can be seen here: https://github.com/peter-nebe/arm-trusted-firmware
 
-After many intermediate steps, I finally got the TF-A to completely initialize the OPTEE-OS and then boot Linux, as can be seen here:
+After many intermediate steps, I finally got the TF-A to completely initialize the OP-TEE OS and then boot Linux, as can be seen here:
 ```
 NOTICE:  BL31: v2.8(debug):d40fb5894-dirty
 NOTICE:  BL31: Built : 12:20:21, Mar  8 2023
@@ -124,7 +124,7 @@ The log outputs look good. **OP-TEE runs on the Raspberry Pi 4!**
 
 Starting with the RPi3, only the two CONSOLE_UART... values (see above) were adjusted in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. Furthermore, of course, the Linux kernel must be built with the default OP-TEE driver (e.g. with buildroot).
 
-This fork of OPTEE-OS also requires my fork of TF-A. They can be **built** together as follows:
+This fork of OP-TEE OS also requires my fork of TF-A. They can be **built** together as follows:
 ```
 cd <development root>/arm-trusted-firmware/plat/rpi/rpi4
 ./mk-rpi4
@@ -133,4 +133,4 @@ cd <development root>/arm-trusted-firmware/plat/rpi/rpi4
 I already have a project that uses the RPi4 port: https://github.com/peter-nebe/optee-security-test
 
 #### Disclaimer
-The same applies to the RPi4 as to the [RPi3](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#disclaimer): This port of TF-A and OPTEE-OS is **NOT SECURE!** It is provided solely for **educational purposes** and **prototyping**.
+The same applies to the RPi4 as to the [RPi3](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#disclaimer): This port of TF-A and OP-TEE OS is **NOT SECURE!** It is provided solely for **educational purposes** and **prototyping**.
