@@ -508,6 +508,23 @@ static const struct tee_cryp_obj_type_props tee_cryp_obj_props[] = {
 	PROP(TEE_TYPE_HMAC_MD5, 8, 64, 512,
 		512 / 8 + sizeof(struct tee_cryp_obj_secret),
 		tee_cryp_obj_secret_value_attrs),
+#if defined(CFG_HMAC_64_1024_RANGE)
+	PROP(TEE_TYPE_HMAC_SHA1, 8, 64, 1024,
+	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
+	     tee_cryp_obj_secret_value_attrs),
+	PROP(TEE_TYPE_HMAC_SHA224, 8, 64, 1024,
+	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
+	     tee_cryp_obj_secret_value_attrs),
+	PROP(TEE_TYPE_HMAC_SHA256, 8, 64, 1024,
+	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
+	     tee_cryp_obj_secret_value_attrs),
+	PROP(TEE_TYPE_HMAC_SHA384, 8, 64, 1024,
+	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
+	     tee_cryp_obj_secret_value_attrs),
+	PROP(TEE_TYPE_HMAC_SHA512, 8, 64, 1024,
+	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
+	     tee_cryp_obj_secret_value_attrs),
+#else
 	PROP(TEE_TYPE_HMAC_SHA1, 8, 80, 512,
 		512 / 8 + sizeof(struct tee_cryp_obj_secret),
 		tee_cryp_obj_secret_value_attrs),
@@ -523,6 +540,7 @@ static const struct tee_cryp_obj_type_props tee_cryp_obj_props[] = {
 	PROP(TEE_TYPE_HMAC_SHA512, 8, 256, 1024,
 		1024 / 8 + sizeof(struct tee_cryp_obj_secret),
 		tee_cryp_obj_secret_value_attrs),
+#endif
 	PROP(TEE_TYPE_HMAC_SHA3_224, 8, 192, 1024,
 	     1024 / 8 + sizeof(struct tee_cryp_obj_secret),
 	     tee_cryp_obj_secret_value_attrs),
@@ -4209,6 +4227,7 @@ TEE_Result syscall_asymm_operate(unsigned long state,
 		break;
 
 	case TEE_ALG_RSAES_PKCS1_V1_5:
+	case TEE_ALG_RSAES_PKCS1_OAEP_MGF1_MD5:
 	case TEE_ALG_RSAES_PKCS1_OAEP_MGF1_SHA1:
 	case TEE_ALG_RSAES_PKCS1_OAEP_MGF1_SHA224:
 	case TEE_ALG_RSAES_PKCS1_OAEP_MGF1_SHA256:
@@ -4270,6 +4289,7 @@ TEE_Result syscall_asymm_operate(unsigned long state,
 	case TEE_ALG_RSASSA_PKCS1_V1_5_SHA256:
 	case TEE_ALG_RSASSA_PKCS1_V1_5_SHA384:
 	case TEE_ALG_RSASSA_PKCS1_V1_5_SHA512:
+	case TEE_ALG_RSASSA_PKCS1_PSS_MGF1_MD5:
 	case TEE_ALG_RSASSA_PKCS1_PSS_MGF1_SHA1:
 	case TEE_ALG_RSASSA_PKCS1_PSS_MGF1_SHA224:
 	case TEE_ALG_RSASSA_PKCS1_PSS_MGF1_SHA256:
