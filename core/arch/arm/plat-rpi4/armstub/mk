@@ -1,11 +1,8 @@
 #!/bin/sh -v
 
-ARMSTUB_DIR=$(pwd)
-OPTEEOS_DIR=../../../../..
+cd ..
+./mk-rpi4
 
-cd ${OPTEEOS_DIR}
-./_mk
-
-cd ${ARMSTUB_DIR}
+cd armstub
 make
-cat armstub8.tmp ${OPTEEOS_DIR}/out/arm-plat-rpi4/core/tee-pager_v2.bin > armstub8-optee.bin
+cat armstub8.tmp ../../../../../out/arm-plat-rpi4/core/tee-pager_v2.bin > armstub8-optee.bin

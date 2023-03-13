@@ -122,15 +122,21 @@ D/TA:  TA_DestroyEntryPoint:50 has been called
 
 The log outputs look good. **OP-TEE runs on the Raspberry Pi 4!**
 
-Starting with the RPi3, only the two CONSOLE_UART... values (see above) were adjusted in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. Furthermore, of course, the Linux kernel must be built with the default OP-TEE driver (e.g. with buildroot).
+Starting with the RPi3, only the two CONSOLE_UART... values (see above) have changed in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. It wasn't a big adjustment overall, but it's only temporary. A proper solution would require a little more effort.
 
-This fork of OP-TEE OS also requires my fork of TF-A. They can be **built** together as follows:
+#### Building instructions
+This fork of OP-TEE OS also requires my fork of TF-A. They can be built together as follows:
 ```
 cd <development root>/arm-trusted-firmware/plat/rpi/rpi4
 ./mk-rpi4
 ```
 
-I already have a project that uses the RPi4 port: https://github.com/peter-nebe/optee-security-test
+The RPi4 then needs the boot settings from [config.txt](core/arch/arm/plat-rpi4/config.txt).
+
+The remaining components (OP-TEE client package, optional OP-TEE examples and test packages, and Linux kernel with OP-TEE driver) can be built with Buildroot, for example. Start with the settings from [raspberrypi4_64_defconfig](https://git.busybox.net/buildroot/tree/configs/raspberrypi4_64_defconfig). Building as described [here](https://optee.readthedocs.io/en/latest/building/gits/build.html) is not recommended because the *rpi4* platform is missing here.
+
+#### Application
+Why did I go to all the trouble? I have a [project that uses OP-TEE](https://github.com/peter-nebe/optee-security-test) and initially only ran in QEMU. I also had a Raspi4 lying around and it was unsatisfying that the apps weren't running on it. Now I can test them on real hardware.
 
 #### Disclaimer
 The same applies to the RPi4 as to the [RPi3](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#disclaimer): This port of TF-A and OP-TEE OS is **NOT SECURE!** It is provided solely for **educational purposes** and **prototyping**.

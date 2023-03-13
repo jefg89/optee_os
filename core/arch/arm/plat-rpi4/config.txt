@@ -1,0 +1,24 @@
+enable_uart=1
+uart_2ndstage=1
+
+arm_64bit=1
+
+# for experimentation only
+#armstub=armstub8-optee.bin
+
+# bl31.bin (ARM Trusted Firmware / TF-A)
+# with OP-TEE OS image attached
+armstub=bl31-optee.bin
+
+kernel=Image
+# load kernel directly to this address, 
+# not to 0x80000 with subsequent relocation
+kernel_address=0x200000
+
+# This file must be loaded into the RAM at a sufficient distance
+# from the device tree, because the OP-TEE OS enlarges the device
+# tree slightly in the RAM.
+initramfs rootfs.cpio.gz 0x2bd10f00   # device_tree_end
+
+device_tree_address=0x2bd00f00
+device_tree_end=0x2bd10f00   # device_tree_address + 64 KiB
