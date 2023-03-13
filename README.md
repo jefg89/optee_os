@@ -122,10 +122,10 @@ D/TA:  TA_DestroyEntryPoint:50 has been called
 
 The log outputs look good. **OP-TEE runs on the Raspberry Pi 4!**
 
-Starting with the RPi3, only the two CONSOLE_UART... values (see above) have changed in the platform configuration. Also in the [TF-A](https://github.com/peter-nebe/arm-trusted-firmware) only a handful of lines had to be inserted. It wasn't a big adjustment overall, but it's only temporary. A proper solution would require a little more effort.
+Starting with the RPi3, only the two CONSOLE_UART... values (see above) have changed in the platform configuration. Also in the TF-A only a handful of lines had to be inserted. It wasn't a big adjustment overall, but it's only temporary. A proper solution would require a little more effort.
 
 #### Building instructions
-This fork of OP-TEE OS also requires my fork of TF-A. They can be built together as follows:
+This fork of OP-TEE OS also requires [my fork of TF-A](https://github.com/peter-nebe/arm-trusted-firmware). They can be built together as follows:
 ```
 cd <development root>/arm-trusted-firmware/plat/rpi/rpi4
 ./mk-rpi4
