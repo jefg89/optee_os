@@ -116,6 +116,7 @@ SRCS_TLS += ssl_cache.c
 SRCS_TLS += ssl_ciphersuites.c
 SRCS_TLS += ssl_cli.c
 SRCS_TLS += ssl_cookie.c
+SRCS_TLS += ssl_msg.c
 SRCS_TLS += ssl_srv.c
 SRCS_TLS += ssl_ticket.c
 SRCS_TLS += ssl_tls.c
