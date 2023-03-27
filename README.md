@@ -138,5 +138,7 @@ The remaining components (OP-TEE client package, optional OP-TEE examples and te
 #### Application
 Why did I go to all the trouble? I have a [project that uses OP-TEE](https://github.com/peter-nebe/optee-security-test) and initially only ran in QEMU. I also had a Raspi4 lying around and it was unsatisfying that the apps weren't running on it. Now I can test them on real hardware.
 
+A [TLS client](https://github.com/peter-nebe/tls-example/tree/master/op-tee) is now also running on the Raspi4 as a trusted application.
+
 #### Disclaimer
 The same applies to the RPi4 as to the [RPi3](https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#disclaimer): This port of TF-A and OP-TEE OS is **NOT SECURE!** It is provided solely for **educational purposes** and **prototyping**.
