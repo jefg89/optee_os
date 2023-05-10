@@ -135,6 +135,8 @@ The RPi4 then needs the boot settings from [config.txt](core/arch/arm/plat-rpi4/
 
 The remaining components (OP-TEE client package, optional OP-TEE examples and test packages, and Linux kernel with OP-TEE driver) can be built with Buildroot, for example. Start with the settings from [raspberrypi4_64_defconfig](https://git.busybox.net/buildroot/tree/configs/raspberrypi4_64_defconfig). Building as described [here](https://optee.readthedocs.io/en/latest/building/gits/build.html) is not recommended because the *rpi4* platform is missing here.
 
+For more information on building with Buildroot and Yocto, see [Building Linux REE](core/arch/arm/plat-rpi4/building-linux-ree.md).
+
 #### Application
 Why did I go to all the trouble? I have a [project that uses OP-TEE](https://github.com/peter-nebe/optee-security-test) and initially only ran in QEMU. I also had a Raspi4 lying around and it was unsatisfying that the apps weren't running on it. Now I can test them on real hardware.
 
